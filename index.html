@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- =========================================================
+         AQUÍ CAMBIAS EL TÍTULO DE LA PESTAÑA DEL NAVEGADOR
+         ========================================================= -->
+    <title>¡Feliz Navidad! 🎄</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a0b12 0%, #070913 100%);
+            color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fondo de nieve */
+        #snow-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Pantalla inicial: Caja de regalo */
+        #gift-screen {
+            z-index: 10;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        .gift-box {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 25px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .gift-body {
+            width: 140px;
+            height: 110px;
+            background: linear-gradient(135deg, #c1121f, #780000);
+            margin: 0 auto;
+            border-radius: 0 0 10px 10px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(193, 18, 31, 0.5);
+        }
+
+        .gift-body::before {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 100%;
+            background: #ffd166;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .gift-lid {
+            width: 160px;
+            height: 35px;
+            background: linear-gradient(135deg, #d62828, #9b2226);
+            border-radius: 6px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            transition: transform 0.5s ease;
+        }
+
+        .gift-lid::before {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 100%;
+            background: #ffd166;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .gift-bow {
+            width: 60px;
+            height: 25px;
+            border: 6px solid #ffd166;
+            border-radius: 50% 50% 0 0;
+            margin: 0 auto -5px;
+            position: relative;
+        }
+
+        .gift-box:hover .gift-lid {
+            transform: translateY(-12px) rotate(-3deg);
+        }
+
+        .click-hint {
+            font-family: 'Cinzel', serif;
+            color: #ffd166;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 209, 102, 0.6);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Contenedor de la carta abierta */
+        #card-content {
+            display: none;
+            z-index: 10;
+            max-width: 750px;
+            width: 90%;
+            margin: 40px auto;
+            background: rgba(18, 22, 33, 0.88);
+            border: 1px solid rgba(255, 209, 102, 0.35);
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(193, 18, 31, 0.2);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        #card-content.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: #ffd166;
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            text-shadow: 0 0 15px rgba(255, 209, 102, 0.4);
+        }
+
+        .text-block {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #e2e8f0;
+            margin-bottom: 22px;
+            text-align: justify;
+        }
+
+        /* Galería de 3 fotos */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .photo-item {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 209, 102, 0.4);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.03);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Contenedor del video */
+        .video-container {
+            margin-top: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #c1121f;
+            box-shadow: 0 10px 25px rgba(193, 18, 31, 0.3);
+        }
+
+        .video-container video {
+            width: 100%;
+            display: block;
+            background: #000;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="snow-canvas"></canvas>
+
+    <!-- PANTALLA DE REGALO CERRADO -->
+    <div id="gift-screen" onclick="abrirRegalo()">
+        <div class="gift-box">
+            <div class="gift-bow"></div>
+            <div class="gift-lid"></div>
+            <div class="gift-body"></div>
+        </div>
+        <p class="click-hint">TOCA PARA ABRIR TU REGALO</p>
+    </div>
+
+    <!-- CONTENIDO DE LA TARJETA (SE MUESTRA AL ABRIR) -->
+    <div id="card-content">
+        
+        <!-- =========================================================
+             TÍTULO PRINCIPAL DE LA CARTA
+             ========================================================= -->
+        <h1>🎄 ¡Feliz Navidad! 🎄</h1>
+
+
+        <!-- =========================================================
+             PÁRRAFO 1 (OPCIONAL: si lo dejas vacío se oculta solo)
+             ========================================================= -->
+        <p class="text-block">
+            Texto 1 Aqui:
+        </p>
+
+
+        <!-- =========================================================
+             PÁRRAFO 2 (OPCIONAL: si lo dejas vacío se oculta solo)
+             ========================================================= -->
+        <p class="text-block">
+            Texto 2 Aqui:
+        </p>
+
+
+        <!-- =========================================================
+             PÁRRAFO 3 (OPCIONAL: si lo dejas vacío se oculta solo)
+             ========================================================= -->
+        <p class="text-block">
+            Texto 3 Aqui:
+        </p>
+
+
+        <!-- =========================================================
+             SECCIÓN DE 3 FOTOS (TODAS OPCIONALES)
+             Instrucción: Pon el nombre de tu imagen dentro de src=""
+             Ejemplo: src="foto1.jpg"
+             Si NO quieres usar una foto, deja src="" vacío y se ocultará.
+             ========================================================= -->
+        <div class="photo-gallery" id="gallery">
+            
+            <!-- FOTO 1 -->
+            <div class="photo-item">
+                <img src="FotoHere.png" alt="Recuerdo 1">
+            </div>
+
+            <!-- FOTO 2 -->
+            <div class="photo-item">
+                <img src="FotoHere.png" alt="Recuerdo 2">
+            </div>
+
+            <!-- FOTO 3 -->
+            <div class="photo-item">
+                <img src="FotoHere.png" alt="Recuerdo 3">
+            </div>
+
+        </div>
+
+
+        <!-- =========================================================
+             SECCIÓN DE VIDEO AL FINAL (OPCIONAL)
+             Instrucción: Pon el nombre de tu video dentro de src=""
+             Ejemplo: src="video_navidad.mp4"
+             Si NO quieres poner video, deja src="" vacío y se ocultará.
+             ========================================================= -->
+        <div class="video-container" id="video-box">
+            <video controls>
+                <source src="" type="video/mp4">
+                Tu navegador no soporta la reproducción de video.
+            </video>
+        </div>
+
+    </div>
+
+    <script>
+        // Limpieza automática de elementos opcionales vacíos
+        document.addEventListener("DOMContentLoaded", () => {
+            // Ocultar párrafos vacíos
+            document.querySelectorAll('.text-block').forEach(p => {
+                if (p.textContent.trim() === '') p.style.display = 'none';
+            });
+
+            // Ocultar fotos sin ruta (src vacío)
+            let fotosActivas = 0;
+            document.querySelectorAll('.photo-item').forEach(item => {
+                const img = item.querySelector('img');
+                if (!img.getAttribute('src') || img.getAttribute('src').trim() === '') {
+                    item.style.display = 'none';
+                } else {
+                    fotosActivas++;
+                }
+            });
+            if (fotosActivas === 0) {
+                document.getElementById('gallery').style.display = 'none';
+            }
+
+            // Ocultar video sin ruta (src vacío)
+            const videoBox = document.getElementById('video-box');
+            const source = videoBox.querySelector('source');
+            if (!source.getAttribute('src') || source.getAttribute('src').trim() === '') {
+                videoBox.style.display = 'none';
+            }
+        });
+
+        // Animación de apertura del regalo
+        function abrirRegalo() {
+            const giftScreen = document.getElementById('gift-screen');
+            const cardContent = document.getElementById('card-content');
+
+            giftScreen.style.opacity = '0';
+            giftScreen.style.transform = 'scale(1.2)';
+
+            setTimeout(() => {
+                giftScreen.style.display = 'none';
+                cardContent.style.display = 'block';
+                
+                // Forzar reflow para que la transición CSS se ejecute
+                void cardContent.offsetWidth;
+                cardContent.classList.add('visible');
+            }, 500);
+        }
+
+        // Efecto de nieve cayendo en Canvas
+        const canvas = document.getElementById('snow-canvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        const snowflakes = Array.from({ length: 80 }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            r: Math.random() * 3 + 1,
+            d: Math.random() * 1 + 0.5
+        }));
+
+        function drawSnow() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.beginPath();
+            for (let f of snowflakes) {
+                ctx.moveTo(f.x, f.y);
+                ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+            }
+            ctx.fill();
+            updateSnow();
+            requestAnimationFrame(drawSnow);
+        }
+
+        function updateSnow() {
+            for (let f of snowflakes) {
+                f.y += f.d;
+                f.x += Math.sin(f.y * 0.01) * 0.5;
+                if (f.y > height) {
+                    f.y = -5;
+                    f.x = Math.random() * width;
+                }
+            }
+        }
+
+        drawSnow();
+    </script>
+</body>
+</html>
